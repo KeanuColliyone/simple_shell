@@ -108,19 +108,14 @@ void execute_command(char *args[]) {
 void print_environment();
 
 int main(void) {
-    char buffer[BUFFER_SIZE];
+    char *buffer;
     size_t n;
-    char *token;
-    char *args[BUFFER_SIZE];
-    int i;
     int found;
     char *path;
     char *path_copy;
     char *dir;
     char cmd_path[BUFFER_SIZE];
-    char *buffer;
     char **args;
-    size_t n;
 
     int is_interactive = isatty(STDIN_FILENO);
 
