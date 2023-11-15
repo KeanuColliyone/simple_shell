@@ -1,4 +1,3 @@
-// commands.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,12 +10,6 @@
 #define MAX_ALIAS_NAME 20
 #define MAX_ALIAS_VALUE 50
 
-struct Alias {
-    char name[MAX_ALIAS_NAME];
-    char value[MAX_ALIAS_VALUE];
-};
-
-struct Alias aliases[MAX_ALIASES];
 int num_aliases = 0;
 
 void execute_command(char *args[]) {
@@ -41,10 +34,11 @@ void execute_command(char *args[]) {
 }
 
 void execute_command_with_alias(char *args[]) {
-    // Check if the command is an alias
-    for (int i = 0; i < num_aliases; ++i) {
+
+	int i;
+
+    for (i = 0; i < num_aliases; ++i) {
         if (strcmp(args[0], aliases[i].name) == 0) {
-            // Replace the alias with its value
             args[0] = aliases[i].value;
             break;
         }
@@ -93,6 +87,9 @@ void change_directory(char *args[]) {
 }
 
 void handle_alias(char *args[]) {
+
+	int i;
+
     if (args[1] != NULL && args[2] != NULL) {
         if (num_aliases < MAX_ALIASES) {
             strncpy(aliases[num_aliases].name, args[1], MAX_ALIAS_NAME - 1);
@@ -102,8 +99,7 @@ void handle_alias(char *args[]) {
             fprintf(stderr, "Max number of aliases reached\n");
         }
     } else if (args[1] != NULL) {
-        // Print the specified alias
-        for (int i = 0; i < num_aliases; ++i) {
+        for (i = 0; i < num_aliases; ++i) {
             if (strcmp(args[1], aliases[i].name) == 0) {
                 printf("%s='%s'\n", aliases[i].name, aliases[i].value);
                 return;
@@ -111,8 +107,7 @@ void handle_alias(char *args[]) {
         }
         fprintf(stderr, "Alias not found: %s\n", args[1]);
     } else {
-        // Print all aliases
-        for (int i = 0; i < num_aliases; ++i) {
+        for (i = 0; i < num_aliases; ++i) {
             printf("%s='%s'\n", aliases[i].name, aliases[i].value);
         }
     }

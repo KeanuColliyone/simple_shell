@@ -1,4 +1,3 @@
-// comments_variables.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,18 +8,20 @@
 
 void process_command(char *command, int is_interactive) {
     size_t n = strlen(command);
+    char *args[BUFFER_SIZE];
+    size_t j;
+    size_t I;
+    size_t arg_start;
+    size_t i;
 
     if (n > 0 && command[n - 1] == '\n') {
-        command[n - 1] = '\0'; // Remove newline character
+        command[n - 1] = '\0';
     }
 
     if (command[0] == '#' || command[0] == '\0') {
-        // Ignore comments and empty lines
         return;
     }
 
-    char *args[BUFFER_SIZE];
-    size_t j, I, arg_start;
     I = 0;
     arg_start = 0;
 
@@ -33,8 +34,7 @@ void process_command(char *command, int is_interactive) {
     }
     args[I] = NULL;
 
-    // Handle variables
-    for (size_t i = 0; i < I; ++i) {
+    for (i = 0; i < I; ++i) {
         if (args[i][0] == '$') {
             char *env_value = getenv(args[i] + 1);
             if (env_value != NULL) {
@@ -61,13 +61,15 @@ void process_command(char *command, int is_interactive) {
 }
 
 void process_commands_from_file(const char *filename, int is_interactive) {
+    
+	char buffer[BUFFER_SIZE];
+
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         perror(filename);
         exit(EXIT_FAILURE);
     }
 
-    char buffer[BUFFER_SIZE];
     while (fgets(buffer, sizeof(buffer), file) != NULL) {
         process_command(buffer, is_interactive);
     }

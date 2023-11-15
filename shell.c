@@ -8,20 +8,27 @@
 
 #define BUFFER_SIZE 1024
 
-void custom_getline(char *buffer, size_t size) {
-    if (fgets(buffer, size, stdin) == NULL) {
-        if (feof(stdin)) {
-            printf("EOF\n");
-            exit(EXIT_SUCCESS);
-        } else {
-            perror("read");
-            exit(EXIT_FAILURE);
-        }
-    }
-}
+void custom_getline(char *buffer, size_t size);
+void print_environment(void);
+void set_environment_variable(char *args[]);
+void unset_environment_variable(char *args[]);
+void change_directory(char *args[]);
+void execute_command(char *args[]);
+void handle_alias(char *args[]);
 
 int main(int argc, char *argv[]) {
     char buffer[BUFFER_SIZE];
+    size_t j;
+    int found;
+    char *path;
+    char *path_copy;
+    char *dir;
+    char cmd_path[BUFFER_SIZE];
+    size_t I;
+    size_t arg_start;
+    size_t n;
+
+    char *args[BUFFER_SIZE];
 
     if (argc == 2) {
         FILE *file = fopen(argv[1], "r");
@@ -35,17 +42,6 @@ int main(int argc, char *argv[]) {
             if (n > 0 && buffer[n - 1] == '\n') {
                 buffer[n - 1] = '\0';
             }
-
-            size_t j;
-            int found;
-            char *path;
-            char *path_copy;
-            char *dir;
-            char cmd_path[BUFFER_SIZE];
-            size_t I;
-            size_t arg_start;
-
-            char *args[BUFFER_SIZE];
 
             I = 0;
             arg_start = 0;
@@ -113,19 +109,15 @@ int main(int argc, char *argv[]) {
         printf("$ ");
         custom_getline(buffer, BUFFER_SIZE);
 
-        size_t n = strlen(buffer);
+        n = strlen(buffer);
         if (n > 0 && buffer[n - 1] == '\n') {
             buffer[n - 1] = '\0';
         }
 
-        size_t I;
-        size_t arg_start;
-
-        char *args[BUFFER_SIZE];
-
         I = 0;
         arg_start = 0;
-        for (size_t j = 0; j <= n; ++j) {
+
+        for (j = 0; j <= n; ++j) {
             if (buffer[j] == ' ' || buffer[j] == '\0') {
                 args[I++] = &buffer[arg_start];
                 buffer[j] = '\0';
@@ -175,5 +167,17 @@ int main(int argc, char *argv[]) {
     }
 
     return EXIT_SUCCESS;
+}
+
+void custom_getline(char *buffer, size_t size) {
+    if (fgets(buffer, size, stdin) == NULL) {
+        if (feof(stdin)) {
+            printf("EOF\n");
+            exit(EXIT_SUCCESS);
+        } else {
+            perror("read");
+            exit(EXIT_FAILURE);
+        }
+    }
 }
 

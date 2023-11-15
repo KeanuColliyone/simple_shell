@@ -1,4 +1,3 @@
-// shell.h
 #ifndef SHELL_H
 #define SHELL_H
 
@@ -31,5 +30,5 @@ void unset_environment_variable(char *args[]);
 void change_directory(char *args[]);
 void handle_alias(char *args[]);
 
-#endif /* SHELL_H */
+#endif
 

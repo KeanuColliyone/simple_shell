@@ -1,4 +1,3 @@
-// logical_operators.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,10 +38,9 @@ void execute_command_with_logical_operators(char *args[], int is_interactive) {
 }
 
 void execute_command_with_logical_operators_and_alias(char *args[], int is_interactive) {
-    // Check if the command is an alias
-    for (int i = 0; i < num_aliases; ++i) {
+    int i;
+    for (i = 0; i < num_aliases; ++i) {
         if (strcmp(args[0], aliases[i].name) == 0) {
-            // Replace the alias with its value
             args[0] = aliases[i].value;
             break;
         }
