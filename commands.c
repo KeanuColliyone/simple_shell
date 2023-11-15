@@ -10,6 +10,13 @@
 #define MAX_ALIAS_NAME 20
 #define MAX_ALIAS_VALUE 50
 
+struct Alias {
+    char name[MAX_ALIAS_NAME];
+    char value[MAX_ALIAS_VALUE];
+};
+
+struct Alias aliases[MAX_ALIASES];
+
 int num_aliases = 0;
 
 void execute_command(char *args[]) {
