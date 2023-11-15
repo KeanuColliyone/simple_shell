@@ -18,6 +18,7 @@ struct Alias {
 extern struct Alias aliases[10];
 extern int num_aliases;
 
+void print_environment(void);
 void execute_command_with_logical_operators(char *args[], int is_interactive);
 void execute_command_with_logical_operators_and_alias(char *args[], int is_interactive);
 void execute_commands_from_file(const char *filename);

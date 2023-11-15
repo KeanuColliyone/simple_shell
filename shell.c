@@ -6,6 +6,8 @@
 #include <sys/wait.h>
 #include "shell.h"
 
+extern char **environ;
+
 #define BUFFER_SIZE 1024
 
 void custom_getline(char *buffer, size_t size);
@@ -29,6 +31,7 @@ int main(int argc, char *argv[]) {
     size_t n;
 
     char *args[BUFFER_SIZE];
+    int is_interactive = isatty(STDIN_FILENO);
 
     if (argc == 2) {
         FILE *file = fopen(argv[1], "r");
@@ -164,9 +167,20 @@ int main(int argc, char *argv[]) {
                 printf("Command not found: %s\n", args[0]);
             }
         }
+	if (!is_interactive) {
+            break;
+        }
     }
 
     return EXIT_SUCCESS;
+}
+
+void print_environment() {
+    char **env = environ;
+    while (*env != NULL) {
+        printf("%s\n", *env);
+        env++;
+    }
 }
 
 void custom_getline(char *buffer, size_t size) {
