@@ -25,24 +25,40 @@ void execute_command(char *args[]) {
             perror(args[0]);
             exit(EXIT_FAILURE);
         }
+        exit(EXIT_SUCCESS);
     } else {
         waitpid(child_pid, &status, 0);
     }
 }
 
-void print_environment();
+void print_environment() {
+    char **env = environ;
+    while (*env != NULL) {
+        printf("%s\n", *env);
+        env++;
+    }
+}
+
+void process_input(char *buffer, char *args[]) {
+    size_t n = strlen(buffer);
+    int i;
+
+    if (n > 0 && buffer[n - 1] == '\n') {
+        buffer[n - 1] = '\0';
+    }
+
+    i = 0;
+    char *token = strtok(buffer, " ");
+    while (token != NULL) {
+        args[i++] = token;
+        token = strtok(NULL, " ");
+    }
+    args[i] = NULL;
+}
 
 int main(void) {
     char buffer[BUFFER_SIZE];
-    size_t n;
-    char *token;
     char *args[BUFFER_SIZE];
-    int i;
-    int found;
-    char *path;
-    char *path_copy;
-    char *dir;
-    char cmd_path[BUFFER_SIZE];
 
     int is_interactive = isatty(STDIN_FILENO);
 
@@ -50,24 +66,13 @@ int main(void) {
         if (is_interactive) {
             printf("$ ");
         }
-        
+
         if (fgets(buffer, BUFFER_SIZE, stdin) == NULL) {
             printf("\n");
             break;
         }
 
-        n = strlen(buffer);
-        if (n > 0 && buffer[n - 1] == '\n') {
-            buffer[n - 1] = '\0';
-        }
-
-        i = 0;
-        token = strtok(buffer, " ");
-        while (token != NULL) {
-            args[i++] = token;
-            token = strtok(NULL, " ");
-        }
-        args[i] = NULL;
+        process_input(buffer, args);
 
         if (strcmp(args[0], "exit") == 0) {
             printf("Exiting the shell\n");
@@ -75,7 +80,7 @@ int main(void) {
         } else if (strcmp(args[0], "env") == 0) {
             print_environment();
         } else {
-            found = 0;
+            int found = 0;
 
             if (strchr(args[0], '/') != NULL) {
                 if (access(args[0], X_OK) == 0) {
@@ -83,14 +88,14 @@ int main(void) {
                     execute_command(args);
                 }
             } else {
-                path = getenv("PATH");
-                path_copy = strdup(path);
-                dir = strtok(path_copy, ":");
+                char *path = getenv("PATH");
+                char *path_copy = strdup(path);
+                char *dir = strtok(path_copy, ":");
 
                 while (dir != NULL) {
-                    snprintf(cmd_path, BUFFER_SIZE, "%s/%s", dir, args[0]);
+                    snprintf(buffer, BUFFER_SIZE, "%s/%s", dir, args[0]);
 
-                    if (access(cmd_path, X_OK) == 0) {
+                    if (access(buffer, X_OK) == 0) {
                         found = 1;
                         execute_command(args);
                         break;
@@ -113,13 +118,5 @@ int main(void) {
     }
 
     return EXIT_SUCCESS;
-}
-
-void print_environment() {
-    char **env = environ;
-    while (*env != NULL) {
-        printf("%s\n", *env);
-        env++;
-    }
 }
 
