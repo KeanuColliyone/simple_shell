@@ -40,7 +40,7 @@ int main(void) {
     size_t command_count = 0;
     size_t i;
     int start;
-    char args[MAX_ARGS][BUFFER_SIZE];
+    char *args[MAX_ARGS];
     int arg_count;
     int start_arg;
     size_t j;
@@ -78,12 +78,13 @@ int main(void) {
             start_arg = 0;
             for (j = 0; j <= strlen(commands[i]); j++) {
                 if (commands[i][j] == ' ' || commands[i][j] == '\0') {
-                    memcpy(args[arg_count], &commands[i][start_arg], j - start_arg);
-                    args[arg_count][j - start_arg] = '\0';
+		    args[arg_count] = &commands[i][start_arg];
                     arg_count++;
                     start_arg = j + 1;
                 }
             }
+
+	    args[arg_count] = NULL;
 
             if (strcmp(args[0], "exit") == 0) {
                 printf("Exiting the shell\n");
